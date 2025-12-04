@@ -1,0 +1,54 @@
+name: expense_tracker
+description: Smart Profit & Expense Analyzer - A comprehensive business management app
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.4.9
+  
+  # Local Database
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  path: ^1.8.3
+  
+  # Charts
+  fl_chart: ^0.65.0
+  
+  # PDF Generation
+  pdf: ^3.10.7
+  printing: ^5.11.1
+  
+  # Utilities
+  intl: ^0.18.1
+  crypto: ^3.0.3
+  shared_preferences: ^2.2.2
+  
+  # File Handling
+  file_picker: ^6.1.1
+  image_picker: ^1.0.5
+  
+  # Notifications
+  flutter_local_notifications: ^16.3.0
+  
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  
+  # Assets
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
