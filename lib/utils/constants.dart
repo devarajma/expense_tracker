@@ -14,7 +14,7 @@ class AppColors {
 class AppStrings {
   static const String appName = 'Profit & Expense Analyzer';
   static const String databaseName = 'expense_tracker.db';
-  static const int databaseVersion = 1;
+  static const int databaseVersion = 2;
   
   // Table names
   static const String tableUsers = 'users';
@@ -24,6 +24,8 @@ class AppStrings {
   static const String tableBudget = 'budgets';
   static const String tableCategory = 'categories';
   static const String tableGST = 'gst_calculations';
+  static const String tableBookings = 'bookings';
+  static const String tableWishlist = 'wishlist';
   
   // Messages
   static const String loginSuccess = 'Login successful!';

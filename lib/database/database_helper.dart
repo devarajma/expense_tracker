@@ -22,7 +22,46 @@ class DatabaseHelper {
       path,
       version: AppStrings.databaseVersion,
       onCreate: _createDB,
+      onUpgrade: _upgradeDB,
     );
+  }
+
+  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add bookings table
+      await db.execute('''
+        CREATE TABLE ${AppStrings.tableBookings} (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          customer_name TEXT NOT NULL,
+          title TEXT NOT NULL,
+          description TEXT,
+          booking_date TEXT NOT NULL,
+          booking_time TEXT NOT NULL,
+          reminder_before INTEGER DEFAULT 60,
+          is_completed INTEGER DEFAULT 0,
+          created_at TEXT NOT NULL,
+          FOREIGN KEY (user_id) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
+        )
+      ''');
+
+      // Add wishlist table
+      await db.execute('''
+        CREATE TABLE ${AppStrings.tableWishlist} (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          item_name TEXT NOT NULL,
+          quantity INTEGER DEFAULT 1,
+          priority TEXT NOT NULL,
+          expected_month TEXT NOT NULL,
+          notes TEXT,
+          is_purchased INTEGER DEFAULT 0,
+          purchased_date TEXT,
+          created_at TEXT NOT NULL,
+          FOREIGN KEY (user_id) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
+        )
+      ''');
+    }
   }
 
   Future _createDB(Database db, int version) async {
@@ -118,6 +157,40 @@ class DatabaseHelper {
         total $realType,
         date $textType,
         FOREIGN KEY (userId) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
+      )
+    ''');
+
+    // Bookings table
+    await db.execute('''
+      CREATE TABLE ${AppStrings.tableBookings} (
+        id $idType,
+        user_id $intType,
+        customer_name $textType,
+        title $textType,
+        description TEXT,
+        booking_date $textType,
+        booking_time $textType,
+        reminder_before INTEGER DEFAULT 60,
+        is_completed INTEGER DEFAULT 0,
+        created_at $textType,
+        FOREIGN KEY (user_id) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
+      )
+    ''');
+
+    // Wishlist table
+    await db.execute('''
+      CREATE TABLE ${AppStrings.tableWishlist} (
+        id $idType,
+        user_id $intType,
+        item_name $textType,
+        quantity INTEGER DEFAULT 1,
+        priority $textType,
+        expected_month $textType,
+        notes TEXT,
+        is_purchased INTEGER DEFAULT 0,
+        purchased_date TEXT,
+        created_at $textType,
+        FOREIGN KEY (user_id) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
       )
     ''');
   }

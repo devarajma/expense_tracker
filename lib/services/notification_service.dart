@@ -1,13 +1,17 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 
 class NotificationService {
   static final NotificationService instance = NotificationService._init();
-  final FlutterLocalNotificationsPlugin _notifications =
+  final FlutterLocalNotificationsPlugin notifications =
       FlutterLocalNotificationsPlugin();
 
   NotificationService._init();
 
   Future<void> initialize() async {
+    // Initialize timezone
+    tz.initializeTimeZones();
+    
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -20,7 +24,7 @@ class NotificationService {
       iOS: iosSettings,
     );
 
-    await _notifications.initialize(
+    await notifications.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Handle notification tap
@@ -47,7 +51,7 @@ class NotificationService {
       iOS: iosDetails,
     );
 
-    await _notifications.show(
+    await notifications.show(
       1,
       title,
       body,
@@ -74,7 +78,7 @@ class NotificationService {
       iOS: iosDetails,
     );
 
-    await _notifications.show(
+    await notifications.show(
       2,
       title,
       body,
@@ -84,12 +88,12 @@ class NotificationService {
 
   Future<void> requestPermissions() async {
     final androidImplementation =
-        _notifications.resolvePlatformSpecificImplementation<
+        notifications.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
     await androidImplementation?.requestNotificationsPermission();
 
     final iosImplementation =
-        _notifications.resolvePlatformSpecificImplementation<
+        notifications.resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>();
     await iosImplementation?.requestPermissions(
       alert: true,

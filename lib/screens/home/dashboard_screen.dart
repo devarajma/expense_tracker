@@ -11,6 +11,10 @@ import 'package:expense_tracker/screens/profit/profit_screen.dart';
 import 'package:expense_tracker/screens/gst/gst_calculator_screen.dart';
 import 'package:expense_tracker/screens/inventory/inventory_screen.dart';
 import 'package:expense_tracker/screens/budget/budget_screen.dart';
+import 'package:expense_tracker/screens/booking/booking_list_screen.dart';
+import 'package:expense_tracker/screens/wishlist/wishlist_screen.dart';
+import 'package:expense_tracker/providers/booking_provider.dart';
+import 'package:expense_tracker/providers/wishlist_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -124,9 +128,10 @@ class DashboardScreen extends ConsumerWidget {
                     GridView.count(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 3,
+                      crossAxisCount: 4,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
+                      childAspectRatio: 0.9,
                       children: [
                         _QuickActionCard(
                           icon: Icons.add_circle,
@@ -185,6 +190,28 @@ class DashboardScreen extends ConsumerWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) => const BudgetScreen()),
+                            );
+                          },
+                        ),
+                        _QuickActionCardWithBadge(
+                          icon: Icons.event_note,
+                          label: 'Bookings',
+                          color: Colors.purple,
+                          badgeCount: ref.watch(todayBookingCountProvider),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const BookingListScreen()),
+                            );
+                          },
+                        ),
+                        _QuickActionCardWithBadge(
+                          icon: Icons.shopping_cart,
+                          label: 'Wishlist',
+                          color: Colors.teal,
+                          badgeCount: ref.watch(highPriorityWishlistCountProvider),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const WishlistScreen()),
                             );
                           },
                         ),
@@ -292,13 +319,90 @@ class _QuickActionCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 32, color: color),
-              const SizedBox(height: 8),
+              Icon(icon, size: 28, color: color),
+              const SizedBox(height: 6),
               Text(
                 label,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickActionCardWithBadge extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final int badgeCount;
+  final VoidCallback onTap;
+
+  const _QuickActionCardWithBadge({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.badgeCount,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(icon, size: 28, color: color),
+                  if (badgeCount > 0)
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          badgeCount > 9 ? '9+' : '$badgeCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),
                 maxLines: 2,
