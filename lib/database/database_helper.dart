@@ -62,6 +62,40 @@ class DatabaseHelper {
         )
       ''');
     }
+    
+    if (oldVersion < 3) {
+      // Add new columns to inventory table
+      try {
+        await db.execute('ALTER TABLE ${AppStrings.tableInventory} ADD COLUMN category TEXT');
+      } catch (e) {
+        // Column might already exist
+      }
+      try {
+        await db.execute('ALTER TABLE ${AppStrings.tableInventory} ADD COLUMN unit TEXT DEFAULT "pcs"');
+      } catch (e) {
+        // Column might already exist
+      }
+      try {
+        await db.execute('ALTER TABLE ${AppStrings.tableInventory} ADD COLUMN notes TEXT');
+      } catch (e) {
+        // Column might already exist
+      }
+      
+      // Create inventory_history table
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS inventory_history (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          inventory_id INTEGER NOT NULL,
+          user_id INTEGER NOT NULL,
+          action_type TEXT NOT NULL,
+          quantity INTEGER NOT NULL,
+          reason TEXT NOT NULL,
+          date TEXT NOT NULL,
+          FOREIGN KEY (inventory_id) REFERENCES ${AppStrings.tableInventory} (id) ON DELETE CASCADE,
+          FOREIGN KEY (user_id) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
+        )
+      ''');
+    }
   }
 
   Future _createDB(Database db, int version) async {
@@ -114,8 +148,11 @@ class DatabaseHelper {
         id $idType,
         userId $intType,
         name $textType,
+        category TEXT,
         quantity $intType,
         lowStockThreshold $intType,
+        unit TEXT DEFAULT 'pcs',
+        notes TEXT,
         lastUpdated $textType,
         FOREIGN KEY (userId) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
       )
@@ -190,6 +227,21 @@ class DatabaseHelper {
         is_purchased INTEGER DEFAULT 0,
         purchased_date TEXT,
         created_at $textType,
+        FOREIGN KEY (user_id) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
+      )
+    ''');
+
+    // Inventory History table
+    await db.execute('''
+      CREATE TABLE inventory_history (
+        id $idType,
+        inventory_id $intType,
+        user_id $intType,
+        action_type $textType,
+        quantity $intType,
+        reason $textType,
+        date $textType,
+        FOREIGN KEY (inventory_id) REFERENCES ${AppStrings.tableInventory} (id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES ${AppStrings.tableUsers} (id) ON DELETE CASCADE
       )
     ''');

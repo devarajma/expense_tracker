@@ -9,7 +9,7 @@ import 'package:expense_tracker/screens/income/income_screen.dart';
 import 'package:expense_tracker/screens/expense/expense_screen.dart';
 import 'package:expense_tracker/screens/profit/profit_screen.dart';
 import 'package:expense_tracker/screens/gst/gst_calculator_screen.dart';
-import 'package:expense_tracker/screens/inventory/inventory_screen.dart';
+import 'package:expense_tracker/screens/inventory/enhanced_inventory_screen.dart';
 import 'package:expense_tracker/screens/budget/budget_screen.dart';
 import 'package:expense_tracker/screens/booking/booking_list_screen.dart';
 import 'package:expense_tracker/screens/wishlist/wishlist_screen.dart';
@@ -179,7 +179,7 @@ class DashboardScreen extends ConsumerWidget {
                           color: AppColors.warning,
                           onTap: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => const InventoryScreen()),
+                              MaterialPageRoute(builder: (_) => const EnhancedInventoryScreen()),
                             );
                           },
                         ),

@@ -14,7 +14,7 @@ class AppColors {
 class AppStrings {
   static const String appName = 'Profit & Expense Analyzer';
   static const String databaseName = 'expense_tracker.db';
-  static const int databaseVersion = 2;
+  static const int databaseVersion = 3;
   
   // Table names
   static const String tableUsers = 'users';
