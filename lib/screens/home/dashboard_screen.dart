@@ -43,11 +43,13 @@ class DashboardScreen extends ConsumerWidget {
 
           final userId = user.id!;
           final dailySummaryAsync = ref.watch(dailySummaryProvider(userId));
+          final monthlySummaryAsync = ref.watch(monthlySummaryProvider(userId));
           final recentTransactionsAsync = ref.watch(recentTransactionsProvider(userId));
 
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(dailySummaryProvider(userId));
+              ref.invalidate(monthlySummaryProvider(userId));
               ref.invalidate(recentTransactionsProvider(userId));
             },
             child: SingleChildScrollView(
@@ -73,17 +75,17 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    // Summary cards
-                    dailySummaryAsync.when(
-                      data: (summary) {
+                    // Summary cards - Monthly Overview
+                    monthlySummaryAsync.when(
+                      data: (monthlySummary) {
                         return Column(
                           children: [
                             Row(
                               children: [
                                 Expanded(
                                   child: SummaryCard(
-                                    title: 'Income',
-                                    amount: summary.totalIncome,
+                                    title: 'Monthly Income',
+                                    amount: monthlySummary.totalIncome,
                                     icon: Icons.arrow_downward,
                                     color: AppColors.income,
                                   ),
@@ -91,9 +93,61 @@ class DashboardScreen extends ConsumerWidget {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: SummaryCard(
-                                    title: 'Expense',
-                                    amount: summary.totalExpense,
+                                    title: 'Monthly Expense',
+                                    amount: monthlySummary.totalExpense,
                                     icon: Icons.arrow_upward,
+                                    color: AppColors.expense,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            SummaryCard(
+                              title: 'Monthly Profit',
+                              amount: monthlySummary.profit,
+                              icon: Icons.account_balance_wallet,
+                              color: monthlySummary.profit >= 0
+                                  ? AppColors.profit
+                                  : AppColors.error,
+                            ),
+                          ],
+                        );
+                      },
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (error, stack) => Text('Error: $error'),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Today's Summary
+                    dailySummaryAsync.when(
+                      data: (summary) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Today\'s Summary',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SummaryCard(
+                                    title: 'Today\'s Income',
+                                    amount: summary.totalIncome,
+                                    icon: Icons.today,
+                                    color: AppColors.income,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: SummaryCard(
+                                    title: 'Today\'s Expense',
+                                    amount: summary.totalExpense,
+                                    icon: Icons.today,
                                     color: AppColors.expense,
                                   ),
                                 ),
@@ -103,7 +157,7 @@ class DashboardScreen extends ConsumerWidget {
                             SummaryCard(
                               title: 'Today\'s Profit',
                               amount: summary.profit,
-                              icon: Icons.account_balance_wallet,
+                              icon: Icons.trending_up,
                               color: summary.profit >= 0
                                   ? AppColors.profit
                                   : AppColors.error,
