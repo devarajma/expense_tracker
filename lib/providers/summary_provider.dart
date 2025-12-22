@@ -77,7 +77,12 @@ final monthlyProfitDataProvider = FutureProvider.family<List<ProfitData>, int>((
   final now = DateTime.now();
   
   for (int i = 5; i >= 0; i--) {
-    final date = DateTime(now.year, now.month - i, 1);
+    // Calculate the target month and handle year boundary crossing
+    final totalMonths = (now.year * 12 + now.month) - i;
+    final targetYear = (totalMonths - 1) ~/ 12;
+    final targetMonth = ((totalMonths - 1) % 12) + 1;
+    final date = DateTime(targetYear, targetMonth, 1);
+    
     final income = await incomeService.getMonthlyTotal(userId, date);
     final expense = await expenseService.getMonthlyTotal(userId, date);
     

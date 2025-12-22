@@ -6,7 +6,6 @@ import 'package:expense_tracker/models/stock_action_reason.dart';
 import 'package:expense_tracker/services/inventory_history_service.dart';
 import 'package:expense_tracker/screens/inventory/dialogs/stock_action_dialog.dart';
 import 'package:expense_tracker/providers/inventory_provider.dart';
-import 'package:expense_tracker/providers/wishlist_provider.dart';
 import 'package:expense_tracker/screens/wishlist/add_wishlist_screen.dart';
 import 'package:expense_tracker/models/wishlist_model.dart';
 
@@ -126,7 +125,7 @@ class _StockLevelCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: color),
                   ),
@@ -385,7 +384,7 @@ class _HistoryTile extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
-        backgroundColor: color.withOpacity(0.1),
+        backgroundColor: color.withValues(alpha: 0.1),
         child: Icon(isAdd ? Icons.add : Icons.remove, color: color, size: 20),
       ),
       title: Text(history.reason),

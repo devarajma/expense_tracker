@@ -100,30 +100,63 @@ class ProfitScreen extends ConsumerWidget {
                       );
                     }
 
+                    // Calculate min and max values for better chart scaling
+                    double maxValue = 0;
+                    double minValue = 0;
+                    for (var data in profitData) {
+                      if (data.income > maxValue) maxValue = data.income;
+                      if (data.expense > maxValue) maxValue = data.expense;
+                      if (data.profit < minValue) minValue = data.profit;
+                    }
+
                     return Card(
+                      elevation: 3,
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
                             SizedBox(
-                              height: 250,
+                              height: 320,
                               child: LineChart(
                                 LineChartData(
-                                  gridData: FlGridData(show: true),
+                                  gridData: FlGridData(
+                                    show: true,
+                                    drawVerticalLine: true,
+                                    horizontalInterval: maxValue > 0 ? maxValue / 5 : 1,
+                                    getDrawingHorizontalLine: (value) {
+                                      return FlLine(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                        strokeWidth: 1,
+                                      );
+                                    },
+                                    getDrawingVerticalLine: (value) {
+                                      return FlLine(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                        strokeWidth: 1,
+                                      );
+                                    },
+                                  ),
                                   titlesData: FlTitlesData(
                                     bottomTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                         showTitles: true,
+                                        reservedSize: 30,
                                         getTitlesWidget: (value, meta) {
                                           if (value.toInt() >= 0 &&
                                               value.toInt() < profitData.length) {
-                                            return Text(
-                                              Helpers.formatMonthYear(
-                                                      profitData[value.toInt()].date)
-                                                  .split(' ')
-                                                  .first
-                                                  .substring(0, 3),
-                                              style: const TextStyle(fontSize: 10),
+                                            return Padding(
+                                              padding: const EdgeInsets.only(top: 8.0),
+                                              child: Text(
+                                                Helpers.formatMonthYear(
+                                                        profitData[value.toInt()].date)
+                                                    .split(' ')
+                                                    .first
+                                                    .substring(0, 3),
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                             );
                                           }
                                           return const Text('');
@@ -133,11 +166,15 @@ class ProfitScreen extends ConsumerWidget {
                                     leftTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                         showTitles: true,
-                                        reservedSize: 40,
+                                        reservedSize: 50,
+                                        interval: maxValue > 0 ? maxValue / 5 : 1,
                                         getTitlesWidget: (value, meta) {
                                           return Text(
                                             Helpers.formatCurrencyCompact(value),
-                                            style: const TextStyle(fontSize: 10),
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           );
                                         },
                                       ),
@@ -149,8 +186,46 @@ class ProfitScreen extends ConsumerWidget {
                                       sideTitles: SideTitles(showTitles: false),
                                     ),
                                   ),
-                                  borderData: FlBorderData(show: true),
+                                  borderData: FlBorderData(
+                                    show: true,
+                                    border: Border.all(
+                                      color: Colors.grey.withValues(alpha: 0.3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  minY: minValue < 0 ? minValue * 1.1 : 0,
+                                  maxY: maxValue * 1.1,
                                   lineBarsData: [
+                                    // Profit/Loss Line
+                                    LineChartBarData(
+                                      spots: profitData
+                                          .asMap()
+                                          .entries
+                                          .map((e) => FlSpot(
+                                              e.key.toDouble(), e.value.profit))
+                                          .toList(),
+                                      isCurved: true,
+                                      color: AppColors.profit,
+                                      barWidth: 4,
+                                      dotData: FlDotData(
+                                        show: true,
+                                        getDotPainter: (spot, percent, barData, index) {
+                                          return FlDotCirclePainter(
+                                            radius: 4,
+                                            color: profitData[index].profit >= 0
+                                                ? AppColors.profit
+                                                : AppColors.error,
+                                            strokeWidth: 2,
+                                            strokeColor: Colors.white,
+                                          );
+                                        },
+                                      ),
+                                      belowBarData: BarAreaData(
+                                        show: true,
+                                        color: AppColors.profit.withValues(alpha: 0.1),
+                                      ),
+                                    ),
+                                    // Income Line
                                     LineChartBarData(
                                       spots: profitData
                                           .asMap()
@@ -161,8 +236,19 @@ class ProfitScreen extends ConsumerWidget {
                                       isCurved: true,
                                       color: AppColors.income,
                                       barWidth: 3,
-                                      dotData: FlDotData(show: true),
+                                      dotData: FlDotData(
+                                        show: true,
+                                        getDotPainter: (spot, percent, barData, index) {
+                                          return FlDotCirclePainter(
+                                            radius: 3,
+                                            color: AppColors.income,
+                                            strokeWidth: 1.5,
+                                            strokeColor: Colors.white,
+                                          );
+                                        },
+                                      ),
                                     ),
+                                    // Expense Line
                                     LineChartBarData(
                                       spots: profitData
                                           .asMap()
@@ -173,21 +259,67 @@ class ProfitScreen extends ConsumerWidget {
                                       isCurved: true,
                                       color: AppColors.expense,
                                       barWidth: 3,
-                                      dotData: FlDotData(show: true),
+                                      dotData: FlDotData(
+                                        show: true,
+                                        getDotPainter: (spot, percent, barData, index) {
+                                          return FlDotCirclePainter(
+                                            radius: 3,
+                                            color: AppColors.expense,
+                                            strokeWidth: 1.5,
+                                            strokeColor: Colors.white,
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ],
+                                  lineTouchData: LineTouchData(
+                                    enabled: true,
+                                    touchTooltipData: LineTouchTooltipData(
+                                      getTooltipItems: (List<LineBarSpot> touchedSpots) {
+                                        return touchedSpots.map((LineBarSpot touchedSpot) {
+                                          String label = '';
+                                          Color color = Colors.white;
+                                          
+                                          if (touchedSpot.barIndex == 0) {
+                                            label = 'Profit: ${Helpers.formatCurrency(touchedSpot.y)}';
+                                            color = touchedSpot.y >= 0 ? AppColors.profit : AppColors.error;
+                                          } else if (touchedSpot.barIndex == 1) {
+                                            label = 'Income: ${Helpers.formatCurrency(touchedSpot.y)}';
+                                            color = AppColors.income;
+                                          } else {
+                                            label = 'Expense: ${Helpers.formatCurrency(touchedSpot.y)}';
+                                            color = AppColors.expense;
+                                          }
+                                          
+                                          return LineTooltipItem(
+                                            label,
+                                            TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            const SizedBox(height: 20),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 20,
+                              runSpacing: 12,
                               children: [
+                                _LegendItem(
+                                  color: AppColors.profit,
+                                  label: 'Profit/Loss',
+                                ),
                                 _LegendItem(
                                   color: AppColors.income,
                                   label: 'Income',
                                 ),
-                                const SizedBox(width: 24),
                                 _LegendItem(
                                   color: AppColors.expense,
                                   label: 'Expense',

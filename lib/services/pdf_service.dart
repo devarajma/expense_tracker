@@ -34,7 +34,7 @@ class PDFService {
             style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey),
           ),
           pw.SizedBox(height: 20),
-          pw.Table.fromTextArray(
+          pw.TableHelper.fromTextArray(
             headers: ['Date', 'Category', 'Amount', 'Notes'],
             data: incomes.map((income) {
               return [
@@ -87,7 +87,7 @@ class PDFService {
             style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey),
           ),
           pw.SizedBox(height: 20),
-          pw.Table.fromTextArray(
+          pw.TableHelper.fromTextArray(
             headers: ['Date', 'Category', 'Amount', 'Notes'],
             data: expenses.map((expense) {
               return [

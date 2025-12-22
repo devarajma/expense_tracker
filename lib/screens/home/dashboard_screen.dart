@@ -26,14 +26,6 @@ class DashboardScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // TODO: Show notifications
-            },
-          ),
-        ],
       ),
       body: userAsync.when(
         data: (user) {
@@ -73,50 +65,6 @@ class DashboardScreen extends ConsumerWidget {
                             color: Colors.grey,
                           ),
                     ),
-                    const SizedBox(height: 24),
-
-                    // Summary cards - Monthly Overview
-                    monthlySummaryAsync.when(
-                      data: (monthlySummary) {
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SummaryCard(
-                                    title: 'Monthly Income',
-                                    amount: monthlySummary.totalIncome,
-                                    icon: Icons.arrow_downward,
-                                    color: AppColors.income,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: SummaryCard(
-                                    title: 'Monthly Expense',
-                                    amount: monthlySummary.totalExpense,
-                                    icon: Icons.arrow_upward,
-                                    color: AppColors.expense,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            SummaryCard(
-                              title: 'Monthly Profit',
-                              amount: monthlySummary.profit,
-                              icon: Icons.account_balance_wallet,
-                              color: monthlySummary.profit >= 0
-                                  ? AppColors.profit
-                                  : AppColors.error,
-                            ),
-                          ],
-                        );
-                      },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, stack) => Text('Error: $error'),
-                    ),
-
                     const SizedBox(height: 24),
 
                     // Today's Summary
@@ -159,6 +107,58 @@ class DashboardScreen extends ConsumerWidget {
                               amount: summary.profit,
                               icon: Icons.trending_up,
                               color: summary.profit >= 0
+                                  ? AppColors.profit
+                                  : AppColors.error,
+                            ),
+                          ],
+                        );
+                      },
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (error, stack) => Text('Error: $error'),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Summary cards - Monthly Overview
+                    monthlySummaryAsync.when(
+                      data: (monthlySummary) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Monthly Overview',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SummaryCard(
+                                    title: 'Monthly Income',
+                                    amount: monthlySummary.totalIncome,
+                                    icon: Icons.arrow_downward,
+                                    color: AppColors.income,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: SummaryCard(
+                                    title: 'Monthly Expense',
+                                    amount: monthlySummary.totalExpense,
+                                    icon: Icons.arrow_upward,
+                                    color: AppColors.expense,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            SummaryCard(
+                              title: 'Monthly Profit',
+                              amount: monthlySummary.profit,
+                              icon: Icons.account_balance_wallet,
+                              color: monthlySummary.profit >= 0
                                   ? AppColors.profit
                                   : AppColors.error,
                             ),

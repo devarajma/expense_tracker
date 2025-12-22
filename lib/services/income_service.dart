@@ -40,8 +40,8 @@ class IncomeService {
   }) async {
     final allIncome = await getAllIncome(userId);
     return allIncome.where((income) {
-      return income.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
-          income.date.isBefore(endDate.add(const Duration(days: 1)));
+      return !income.date.isBefore(startDate) &&
+          !income.date.isAfter(endDate);
     }).toList();
   }
 

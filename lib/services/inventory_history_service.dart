@@ -1,7 +1,6 @@
 import 'package:expense_tracker/database/database_helper.dart';
 import 'package:expense_tracker/models/inventory_history_model.dart';
 import 'package:expense_tracker/models/stock_action_reason.dart';
-import 'package:expense_tracker/utils/constants.dart';
 
 class InventoryHistoryService {
   final _db = DatabaseHelper.instance;

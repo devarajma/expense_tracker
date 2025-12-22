@@ -20,13 +20,12 @@ class BookingService {
           await _scheduleBookingNotification(booking.copyWith(id: id));
         } catch (e) {
           // Log notification error but don't fail the save
-          print('Failed to schedule notification: $e');
+          // Error silently handled
         }
       }
       
       return id;
     } catch (e) {
-      print('Failed to add booking: $e');
       return 0;
     }
   }
@@ -65,7 +64,7 @@ class BookingService {
         try {
           await _cancelBookingNotification(booking.id!);
         } catch (e) {
-          print('Failed to cancel notification: $e');
+          // Error silently handled
         }
       }
       
@@ -76,13 +75,12 @@ class BookingService {
         try {
           await _scheduleBookingNotification(booking);
         } catch (e) {
-          print('Failed to reschedule notification: $e');
+          // Error silently handled
         }
       }
       
       return result;
     } catch (e) {
-      print('Failed to update booking: $e');
       return 0;
     }
   }
@@ -148,7 +146,7 @@ class BookingService {
       }
     } catch (e) {
       // Log error but don't throw - notifications are optional
-      print('Notification scheduling error: $e');
+      // Error silently handled
     }
   }
 

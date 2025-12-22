@@ -40,8 +40,8 @@ class ExpenseService {
   }) async {
     final allExpenses = await getAllExpenses(userId);
     return allExpenses.where((expense) {
-      return expense.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
-          expense.date.isBefore(endDate.add(const Duration(days: 1)));
+      return !expense.date.isBefore(startDate) &&
+          !expense.date.isAfter(endDate);
     }).toList();
   }
 

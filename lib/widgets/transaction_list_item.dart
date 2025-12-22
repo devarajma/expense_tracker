@@ -41,8 +41,8 @@ class TransactionListItem extends StatelessWidget {
           height: 48,
           decoration: BoxDecoration(
             color: isIncome
-                ? AppColors.income.withOpacity(0.1)
-                : AppColors.expense.withOpacity(0.1),
+                ? AppColors.income.withValues(alpha: 0.1)
+                : AppColors.expense.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(

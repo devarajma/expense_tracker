@@ -97,7 +97,6 @@ class InventoryService {
 
       return true;
     } catch (e) {
-      print('Error adding stock: $e');
       return false;
     }
   }
@@ -123,7 +122,6 @@ class InventoryService {
 
       // Check if enough stock
       if (item.quantity < quantity) {
-        print('Insufficient stock');
         return false;
       }
 
@@ -161,7 +159,6 @@ class InventoryService {
 
       return true;
     } catch (e) {
-      print('Error using stock: $e');
       return false;
     }
   }
