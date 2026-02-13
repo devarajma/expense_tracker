@@ -372,14 +372,15 @@ class _QuickActionCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 28, color: color),
-              const SizedBox(height: 6),
+              Icon(icon, size: 24, color: color),
+              const SizedBox(height: 4),
               Text(
                 label,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),
                 maxLines: 2,
@@ -419,11 +420,12 @@ class _QuickActionCardWithBadge extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Icon(icon, size: 28, color: color),
+                  Icon(icon, size: 24, color: color),
                   if (badgeCount > 0)
                     Positioned(
                       right: -6,
@@ -451,12 +453,12 @@ class _QuickActionCardWithBadge extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Text(
                 label,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),
                 maxLines: 2,
